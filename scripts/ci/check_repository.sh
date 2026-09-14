@@ -7,6 +7,10 @@ git diff --check
 
 bad=0
 while IFS= read -r -d '' file; do
+  if [[ ! -f "$file" ]]; then
+    continue
+  fi
+
   case "$file" in
     *.bit|*.dcp|*.vvp|*.jou|*.log|*.lic|license.dat|uiFDMA.v)
       echo "Forbidden generated, licensed, or external file is tracked: $file"
