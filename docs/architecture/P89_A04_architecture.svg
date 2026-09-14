@@ -1,0 +1,334 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1280" viewBox="0 0 1920 1280">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#eef4fa"/>
+    </linearGradient>
+    <linearGradient id="island" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef6ff"/>
+      <stop offset="1" stop-color="#dbeafe"/>
+    </linearGradient>
+    <linearGradient id="a04" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff7ed"/>
+      <stop offset="1" stop-color="#ffedd5"/>
+    </linearGradient>
+    <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowNavy" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155"/>
+    </marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#ea580c"/>
+    </marker>
+    <style><![CDATA[
+      .title { font: 700 34px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#0f172a; }
+      .subtitle { font: 400 17px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#475569; }
+      .band-title { font: 700 17px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#334155; letter-spacing:1px; }
+      .box-title { font: 700 17px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#0f172a; }
+      .small-title { font: 700 14px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#0f172a; }
+      .body { font: 400 14px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#334155; }
+      .tiny { font: 400 12px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill:#475569; }
+      .mono { font: 600 13px Consolas, "Microsoft YaHei", monospace; fill:#334155; }
+      .white { fill:#fff; }
+      .control-line { fill:none; stroke:#64748b; stroke-width:2.2; stroke-dasharray:8 7; marker-end:url(#arrowNavy); }
+      .data-line { fill:none; stroke:#2563eb; stroke-width:5; marker-end:url(#arrowBlue); }
+      .data-line-thin { fill:none; stroke:#2563eb; stroke-width:3.2; marker-end:url(#arrowBlue); }
+      .cfg-line { fill:none; stroke:#ea580c; stroke-width:2.8; marker-end:url(#arrowOrange); }
+      .cfg-bus { fill:none; stroke:#ea580c; stroke-width:4; }
+      .soft-box { fill:#fff; stroke:#cbd5e1; stroke-width:1.5; rx:12; }
+    ]]></style>
+  </defs>
+
+  <rect width="1920" height="1280" fill="url(#bg)"/>
+  <rect x="24" y="22" width="1872" height="1234" rx="24" fill="#ffffff" stroke="#dbe5f0" stroke-width="1.5"/>
+
+  <text x="60" y="66" class="title">P89-A04：完整四岛 GEMM 主通路架构</text>
+  <text x="60" y="94" class="subtitle">64-bit 搬运 ＋ 保留式 A/B 缓存 ＋ 局部 128-bit 计算读口 ＋ 4 组局部后处理；A04 仅重构量化参数的配置提交网络</text>
+
+  <!-- Control plane -->
+  <rect x="48" y="118" width="1264" height="160" rx="18" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+  <text x="68" y="145" class="band-title">控制通路</text>
+
+  <g filter="url(#shadow)">
+    <rect x="68" y="169" width="154" height="68" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <rect x="252" y="169" width="164" height="68" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <rect x="446" y="169" width="164" height="68" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <rect x="640" y="169" width="180" height="68" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <rect x="850" y="169" width="202" height="68" rx="10" fill="#fff" stroke="#94a3b8"/>
+    <rect x="1082" y="169" width="190" height="68" rx="10" fill="#fff" stroke="#94a3b8"/>
+  </g>
+  <text x="145" y="198" text-anchor="middle" class="box-title">命令 FIFO</text>
+  <text x="145" y="220" text-anchor="middle" class="tiny">command queue</text>
+  <text x="334" y="198" text-anchor="middle" class="box-title">描述符读取 / 检查</text>
+  <text x="334" y="220" text-anchor="middle" class="tiny">合法性与依赖</text>
+  <text x="528" y="198" text-anchor="middle" class="box-title">job_executor</text>
+  <text x="528" y="220" text-anchor="middle" class="tiny">任务状态 / fence</text>
+  <text x="730" y="198" text-anchor="middle" class="box-title">macro_scheduler</text>
+  <text x="730" y="220" text-anchor="middle" class="tiny">K-chunk / panel 调度</text>
+  <text x="951" y="195" text-anchor="middle" class="box-title">packet FIFO / C 预约</text>
+  <text x="951" y="218" text-anchor="middle" class="tiny">slot / PSUM ownership</text>
+  <text x="1177" y="198" text-anchor="middle" class="box-title">packet_feeder</text>
+  <text x="1177" y="220" text-anchor="middle" class="tiny">窄 token 分发</text>
+  <path d="M222 203 H252" class="control-line"/>
+  <path d="M416 203 H446" class="control-line"/>
+  <path d="M610 203 H640" class="control-line"/>
+  <path d="M820 203 H850" class="control-line"/>
+  <path d="M1052 203 H1082" class="control-line"/>
+
+  <!-- A04 highlight -->
+  <g filter="url(#shadow)">
+    <rect x="1340" y="118" width="532" height="160" rx="18" fill="url(#a04)" stroke="#f97316" stroke-width="2.3"/>
+  </g>
+  <text x="1364" y="145" class="band-title" fill="#9a3412">A04 核心改动：单一全局 cfg commit record</text>
+  <rect x="1364" y="160" width="484" height="53" rx="10" fill="#fff" stroke="#fb923c"/>
+  <text x="1606" y="183" text-anchor="middle" class="mono">valid + index + 78-bit payload</text>
+  <text x="1606" y="202" text-anchor="middle" class="tiny">relu(1) + zero_point(8) + shift(6) + multiplier(31) + bias(32)</text>
+  <text x="1366" y="238" class="body">每拍可接收 1 个配置项；下一拍同时提交到四份本地系数表副本</text>
+  <text x="1366" y="260" class="tiny">idle = read_idle &amp;&amp; !cfg_commit_valid：最后一次待提交写入不能被任务 begin 越过</text>
+
+  <!-- Main data area headings -->
+  <text x="60" y="324" class="band-title">数据搬运与保留式缓存</text>
+  <text x="515" y="324" class="band-title">四个自治计算岛（总计 16 tiles / 256 PE）</text>
+  <text x="1238" y="324" class="band-title">四组局部结果处理通路</text>
+
+  <!-- External transport -->
+  <g filter="url(#shadow)">
+    <rect x="58" y="366" width="162" height="88" rx="12" fill="#eff6ff" stroke="#60a5fa" stroke-width="1.7"/>
+    <rect x="250" y="366" width="162" height="88" rx="12" fill="#eff6ff" stroke="#60a5fa" stroke-width="1.7"/>
+    <rect x="58" y="500" width="354" height="92" rx="12" fill="#eff6ff" stroke="#60a5fa" stroke-width="1.7"/>
+    <rect x="58" y="638" width="354" height="232" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  </g>
+  <text x="139" y="399" text-anchor="middle" class="box-title">DDR / DMA</text>
+  <text x="139" y="423" text-anchor="middle" class="mono">64-bit transport</text>
+  <text x="139" y="443" text-anchor="middle" class="tiny">外部搬运边界</text>
+  <text x="331" y="399" text-anchor="middle" class="box-title">跨时钟 FIFO</text>
+  <text x="331" y="423" text-anchor="middle" class="body">64-bit 数据 + keep</text>
+  <text x="235" y="535" text-anchor="middle" class="box-title">panel_load_narrow / transport pack</text>
+  <text x="235" y="559" text-anchor="middle" class="body">两个 64-bit beat 配对，写入 128-bit panel word</text>
+  <text x="235" y="580" text-anchor="middle" class="tiny">窄总线只停留在搬运边界，不进入计算阵列全局布线</text>
+
+  <text x="235" y="672" text-anchor="middle" class="box-title">保留式 A/B panel store</text>
+  <text x="235" y="695" text-anchor="middle" class="tiny">bank ownership + load / retained / in_use 状态</text>
+  <rect x="82" y="720" width="138" height="60" rx="8" fill="#fff" stroke="#38bdf8"/>
+  <rect x="250" y="720" width="138" height="60" rx="8" fill="#fff" stroke="#38bdf8"/>
+  <rect x="82" y="794" width="138" height="60" rx="8" fill="#fff" stroke="#38bdf8"/>
+  <rect x="250" y="794" width="138" height="60" rx="8" fill="#fff" stroke="#38bdf8"/>
+  <text x="151" y="747" text-anchor="middle" class="small-title">A0 resident</text>
+  <text x="151" y="766" text-anchor="middle" class="tiny">128-bit compute read</text>
+  <text x="319" y="747" text-anchor="middle" class="small-title">A1 resident</text>
+  <text x="319" y="766" text-anchor="middle" class="tiny">load / compute overlap</text>
+  <text x="151" y="821" text-anchor="middle" class="small-title">B0 resident</text>
+  <text x="151" y="840" text-anchor="middle" class="tiny">128-bit compute read</text>
+  <text x="319" y="821" text-anchor="middle" class="small-title">B1 resident</text>
+  <text x="319" y="840" text-anchor="middle" class="tiny">load / compute overlap</text>
+
+  <path d="M220 410 H250" class="data-line"/>
+  <path d="M331 454 V480 Q331 500 311 500 H235" class="data-line"/>
+  <path d="M235 592 V638" class="data-line"/>
+  <text x="232" y="483" text-anchor="middle" class="tiny">64b</text>
+
+  <!-- Local feed bus -->
+  <path d="M412 754 H470" class="data-line"/>
+  <path d="M470 420 V865" fill="none" stroke="#2563eb" stroke-width="6"/>
+  <text x="454" y="617" text-anchor="end" class="tiny">局部 banked read</text>
+  <text x="454" y="635" text-anchor="end" class="mono">A128 + B128 / cycle</text>
+
+  <!-- Island generator-like repeated blocks -->
+  <!-- Island 0 -->
+  <g filter="url(#shadow)">
+    <rect x="520" y="354" width="310" height="242" rx="16" fill="url(#island)" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="520" y="354" width="310" height="42" rx="16" fill="#2563eb"/>
+  <rect x="520" y="380" width="310" height="16" fill="#2563eb"/>
+  <text x="542" y="382" class="box-title white">自治岛 0</text>
+  <text x="806" y="382" text-anchor="end" class="tiny white">4 tiles · 64 PE</text>
+  <rect x="542" y="417" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="684" y="417" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="542" y="493" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="684" y="493" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <text x="604" y="442" text-anchor="middle" class="small-title">Tile 0</text><text x="604" y="464" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="746" y="442" text-anchor="middle" class="small-title">Tile 1</text><text x="746" y="464" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="604" y="518" text-anchor="middle" class="small-title">Tile 2</text><text x="604" y="540" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="746" y="518" text-anchor="middle" class="small-title">Tile 3</text><text x="746" y="540" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="675" y="580" text-anchor="middle" class="tiny">岛内宽数据；跨岛只交换窄控制 / token</text>
+
+  <!-- Island 1 -->
+  <g filter="url(#shadow)">
+    <rect x="880" y="354" width="310" height="242" rx="16" fill="url(#island)" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="880" y="354" width="310" height="42" rx="16" fill="#2563eb"/>
+  <rect x="880" y="380" width="310" height="16" fill="#2563eb"/>
+  <text x="902" y="382" class="box-title white">自治岛 1</text>
+  <text x="1166" y="382" text-anchor="end" class="tiny white">4 tiles · 64 PE</text>
+  <rect x="902" y="417" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="1044" y="417" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="902" y="493" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="1044" y="493" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <text x="964" y="442" text-anchor="middle" class="small-title">Tile 4</text><text x="964" y="464" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="1106" y="442" text-anchor="middle" class="small-title">Tile 5</text><text x="1106" y="464" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="964" y="518" text-anchor="middle" class="small-title">Tile 6</text><text x="964" y="540" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="1106" y="518" text-anchor="middle" class="small-title">Tile 7</text><text x="1106" y="540" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="1035" y="580" text-anchor="middle" class="tiny">岛内 collector ownership / 独立反压</text>
+
+  <!-- Island 2 -->
+  <g filter="url(#shadow)">
+    <rect x="520" y="704" width="310" height="242" rx="16" fill="url(#island)" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="520" y="704" width="310" height="42" rx="16" fill="#2563eb"/>
+  <rect x="520" y="730" width="310" height="16" fill="#2563eb"/>
+  <text x="542" y="732" class="box-title white">自治岛 2</text>
+  <text x="806" y="732" text-anchor="end" class="tiny white">4 tiles · 64 PE</text>
+  <rect x="542" y="767" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="684" y="767" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="542" y="843" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="684" y="843" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <text x="604" y="792" text-anchor="middle" class="small-title">Tile 8</text><text x="604" y="814" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="746" y="792" text-anchor="middle" class="small-title">Tile 9</text><text x="746" y="814" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="604" y="868" text-anchor="middle" class="small-title">Tile 10</text><text x="604" y="890" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="746" y="868" text-anchor="middle" class="small-title">Tile 11</text><text x="746" y="890" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="675" y="930" text-anchor="middle" class="tiny">每岛独立完成 / P4 输出，不做整矩阵同拍汇合</text>
+
+  <!-- Island 3 -->
+  <g filter="url(#shadow)">
+    <rect x="880" y="704" width="310" height="242" rx="16" fill="url(#island)" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <rect x="880" y="704" width="310" height="42" rx="16" fill="#2563eb"/>
+  <rect x="880" y="730" width="310" height="16" fill="#2563eb"/>
+  <text x="902" y="732" class="box-title white">自治岛 3</text>
+  <text x="1166" y="732" text-anchor="end" class="tiny white">4 tiles · 64 PE</text>
+  <rect x="902" y="767" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="1044" y="767" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="902" y="843" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <rect x="1044" y="843" width="124" height="62" rx="8" fill="#fff" stroke="#93c5fd"/>
+  <text x="964" y="792" text-anchor="middle" class="small-title">Tile 12</text><text x="964" y="814" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="1106" y="792" text-anchor="middle" class="small-title">Tile 13</text><text x="1106" y="814" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="964" y="868" text-anchor="middle" class="small-title">Tile 14</text><text x="964" y="890" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="1106" y="868" text-anchor="middle" class="small-title">Tile 15</text><text x="1106" y="890" text-anchor="middle" class="mono">4×4 PE</text>
+  <text x="1035" y="930" text-anchor="middle" class="tiny">四岛总计 256 PE；计算规模与基线一致</text>
+
+  <!-- Feed branches -->
+  <path d="M470 475 H520" class="data-line"/>
+  <path d="M470 405 V338 H850 Q880 338 880 354" class="data-line"/>
+  <path d="M470 825 H520" class="data-line"/>
+  <path d="M470 665 H850 Q880 665 880 704" class="data-line"/>
+
+  <!-- Control fanout bus -->
+  <path d="M1177 237 V300 H856 V925" fill="none" stroke="#64748b" stroke-width="2.2" stroke-dasharray="8 7"/>
+  <path d="M856 390 H830" class="control-line"/>
+  <path d="M856 455 H880" class="control-line"/>
+  <path d="M856 740 H830" class="control-line"/>
+  <path d="M856 805 H880" class="control-line"/>
+  <text x="1126" y="294" text-anchor="end" class="tiny">packet / credit / completion token（窄流）</text>
+
+  <!-- Postprocess lane backgrounds -->
+  <g>
+    <rect x="1234" y="352" width="628" height="132" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="1234" y="522" width="628" height="132" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="1234" y="692" width="628" height="132" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+    <rect x="1234" y="862" width="628" height="132" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+  </g>
+  <text x="1248" y="372" class="tiny">后处理组 0</text>
+  <text x="1248" y="542" class="tiny">后处理组 1</text>
+  <text x="1248" y="712" class="tiny">后处理组 2</text>
+  <text x="1248" y="882" class="tiny">后处理组 3</text>
+
+  <!-- Repeated lane blocks -->
+  <!-- lane 0 -->
+  <rect x="1250" y="389" width="132" height="68" rx="9" fill="#eef2ff" stroke="#818cf8"/>
+  <rect x="1402" y="389" width="112" height="68" rx="9" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <rect x="1534" y="378" width="134" height="90" rx="9" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <rect x="1689" y="389" width="151" height="68" rx="9" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="1316" y="414" text-anchor="middle" class="small-title">local collector</text><text x="1316" y="437" text-anchor="middle" class="tiny">merge / result FIFO</text>
+  <text x="1458" y="414" text-anchor="middle" class="small-title">PSUM P4</text><text x="1458" y="437" text-anchor="middle" class="tiny">4×INT32</text>
+  <text x="1601" y="397" text-anchor="middle" class="small-title">系数表副本 0</text><text x="1601" y="418" text-anchor="middle" class="tiny">4 banks / sync read</text><text x="1601" y="447" text-anchor="middle" class="mono">78b × channel</text>
+  <text x="1765" y="414" text-anchor="middle" class="small-title">requant P4</text><text x="1765" y="437" text-anchor="middle" class="tiny">bias / mul / shift / ReLU</text>
+  <!-- lane 1 -->
+  <rect x="1250" y="559" width="132" height="68" rx="9" fill="#eef2ff" stroke="#818cf8"/>
+  <rect x="1402" y="559" width="112" height="68" rx="9" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <rect x="1534" y="548" width="134" height="90" rx="9" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <rect x="1689" y="559" width="151" height="68" rx="9" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="1316" y="584" text-anchor="middle" class="small-title">local collector</text><text x="1316" y="607" text-anchor="middle" class="tiny">merge / result FIFO</text>
+  <text x="1458" y="584" text-anchor="middle" class="small-title">PSUM P4</text><text x="1458" y="607" text-anchor="middle" class="tiny">4×INT32</text>
+  <text x="1601" y="567" text-anchor="middle" class="small-title">系数表副本 1</text><text x="1601" y="588" text-anchor="middle" class="tiny">4 banks / sync read</text><text x="1601" y="617" text-anchor="middle" class="mono">78b × channel</text>
+  <text x="1765" y="584" text-anchor="middle" class="small-title">requant P4</text><text x="1765" y="607" text-anchor="middle" class="tiny">bias / mul / shift / ReLU</text>
+  <!-- lane 2 -->
+  <rect x="1250" y="729" width="132" height="68" rx="9" fill="#eef2ff" stroke="#818cf8"/>
+  <rect x="1402" y="729" width="112" height="68" rx="9" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <rect x="1534" y="718" width="134" height="90" rx="9" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <rect x="1689" y="729" width="151" height="68" rx="9" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="1316" y="754" text-anchor="middle" class="small-title">local collector</text><text x="1316" y="777" text-anchor="middle" class="tiny">merge / result FIFO</text>
+  <text x="1458" y="754" text-anchor="middle" class="small-title">PSUM P4</text><text x="1458" y="777" text-anchor="middle" class="tiny">4×INT32</text>
+  <text x="1601" y="737" text-anchor="middle" class="small-title">系数表副本 2</text><text x="1601" y="758" text-anchor="middle" class="tiny">4 banks / sync read</text><text x="1601" y="787" text-anchor="middle" class="mono">78b × channel</text>
+  <text x="1765" y="754" text-anchor="middle" class="small-title">requant P4</text><text x="1765" y="777" text-anchor="middle" class="tiny">bias / mul / shift / ReLU</text>
+  <!-- lane 3 -->
+  <rect x="1250" y="899" width="132" height="68" rx="9" fill="#eef2ff" stroke="#818cf8"/>
+  <rect x="1402" y="899" width="112" height="68" rx="9" fill="#f5f3ff" stroke="#8b5cf6"/>
+  <rect x="1534" y="888" width="134" height="90" rx="9" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <rect x="1689" y="899" width="151" height="68" rx="9" fill="#ecfdf5" stroke="#10b981"/>
+  <text x="1316" y="924" text-anchor="middle" class="small-title">local collector</text><text x="1316" y="947" text-anchor="middle" class="tiny">merge / result FIFO</text>
+  <text x="1458" y="924" text-anchor="middle" class="small-title">PSUM P4</text><text x="1458" y="947" text-anchor="middle" class="tiny">4×INT32</text>
+  <text x="1601" y="907" text-anchor="middle" class="small-title">系数表副本 3</text><text x="1601" y="928" text-anchor="middle" class="tiny">4 banks / sync read</text><text x="1601" y="957" text-anchor="middle" class="mono">78b × channel</text>
+  <text x="1765" y="924" text-anchor="middle" class="small-title">requant P4</text><text x="1765" y="947" text-anchor="middle" class="tiny">bias / mul / shift / ReLU</text>
+
+  <!-- Island to post data -->
+  <path d="M830 475 H840 V334 H1218 Q1234 334 1234 423 H1250" class="data-line-thin"/>
+  <path d="M1190 475 H1218 Q1234 475 1234 593 H1250" class="data-line-thin"/>
+  <path d="M830 825 H840 V680 H1218 Q1234 680 1234 763 H1250" class="data-line-thin"/>
+  <path d="M1190 825 H1218 Q1234 825 1234 933 H1250" class="data-line-thin"/>
+  <text x="1218" y="340" text-anchor="end" class="tiny">每岛局部 128-bit P4 结果</text>
+
+  <!-- In-lane data arrows -->
+  <path d="M1382 423 H1402" class="data-line-thin"/><path d="M1514 423 V374 H1710 V389" class="data-line-thin"/>
+  <path d="M1382 593 H1402" class="data-line-thin"/><path d="M1514 593 V544 H1710 V559" class="data-line-thin"/>
+  <path d="M1382 763 H1402" class="data-line-thin"/><path d="M1514 763 V714 H1710 V729" class="data-line-thin"/>
+  <path d="M1382 933 H1402" class="data-line-thin"/><path d="M1514 933 V884 H1710 V899" class="data-line-thin"/>
+
+  <!-- Config commit broadcast bus and coefficient-to-requant -->
+  <path d="M1606 278 V309 H1522 V950" class="cfg-bus"/>
+  <path d="M1522 423 H1534" class="cfg-line"/>
+  <path d="M1522 593 H1534" class="cfg-line"/>
+  <path d="M1522 763 H1534" class="cfg-line"/>
+  <path d="M1522 933 H1534" class="cfg-line"/>
+  <path d="M1668 445 H1689" class="cfg-line"/>
+  <path d="M1668 615 H1689" class="cfg-line"/>
+  <path d="M1668 785 H1689" class="cfg-line"/>
+  <path d="M1668 955 H1689" class="cfg-line"/>
+  <text x="1536" y="343" class="tiny" fill="#9a3412">78-bit commit 广播</text>
+
+  <!-- Feature store -->
+  <g filter="url(#shadow)">
+    <rect x="1260" y="1045" width="382" height="112" rx="14" fill="#ecfeff" stroke="#0891b2" stroke-width="2"/>
+    <rect x="1684" y="1045" width="178" height="112" rx="14" fill="#eff6ff" stroke="#3b82f6" stroke-width="2"/>
+  </g>
+  <text x="1451" y="1080" text-anchor="middle" class="box-title">INT8 feature store</text>
+  <text x="1451" y="1105" text-anchor="middle" class="body">4 路局部写入 · 片上结果保留</text>
+  <text x="1451" y="1129" text-anchor="middle" class="tiny">坐标 / keep / tag 随流；不强制四岛同拍汇合</text>
+  <text x="1773" y="1080" text-anchor="middle" class="box-title">结果读取 / 写回</text>
+  <text x="1773" y="1106" text-anchor="middle" class="mono">64-bit transport</text>
+  <text x="1773" y="1130" text-anchor="middle" class="tiny">pack / bypass to DMA shell</text>
+  <path d="M1840 423 H1870 V1000 H1290 V1045" class="data-line-thin"/>
+  <path d="M1840 593 H1878 V1010 H1310 V1045" class="data-line-thin"/>
+  <path d="M1840 763 H1886 V1020 H1330 V1045" class="data-line-thin"/>
+  <path d="M1840 933 H1894 V1030 H1350 V1045" class="data-line-thin"/>
+  <path d="M1642 1101 H1684" class="data-line"/>
+
+  <!-- Key conclusions / legend -->
+  <rect x="58" y="1001" width="1132" height="156" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="80" y="1031" class="box-title">A04 的含义与边界</text>
+  <circle cx="86" cy="1060" r="5" fill="#2563eb"/><text x="102" y="1065" class="body">数据面不降规模：4 岛 × 4 tiles/岛 × 4×4 PE/tile = 256 PE；4 路 P4 后处理保持并行。</text>
+  <circle cx="86" cy="1090" r="5" fill="#ea580c"/><text x="102" y="1095" class="body">只把原配置分发端改成 1 个全局提交寄存器；仍保留 4 份系数表副本，保证四岛独立同步读口。</text>
+  <circle cx="86" cy="1120" r="5" fill="#64748b"/><text x="102" y="1125" class="body">实验范围：GEMM + 64-bit transport + real 256-PE compute + PSUM4 + quant4 + feature store；不含最终 CONV / pool / DDR PHY shell。</text>
+
+  <rect x="58" y="1183" width="1804" height="48" rx="10" fill="#0f172a"/>
+  <line x1="86" y1="1207" x2="130" y2="1207" stroke="#2563eb" stroke-width="5"/>
+  <text x="142" y="1212" class="tiny white">主数据流</text>
+  <line x1="270" y1="1207" x2="314" y2="1207" stroke="#64748b" stroke-width="2.2" stroke-dasharray="8 7"/>
+  <text x="326" y="1212" class="tiny white">窄控制 / token</text>
+  <line x1="492" y1="1207" x2="536" y2="1207" stroke="#ea580c" stroke-width="3"/>
+  <text x="548" y="1212" class="tiny white">A04 配置广播</text>
+  <text x="820" y="1212" class="tiny white">本图基于 P89-A04 实验 RTL；重点展示完整四岛 GEMM 主通路及 A04 与基线的结构差异。</text>
+</svg>

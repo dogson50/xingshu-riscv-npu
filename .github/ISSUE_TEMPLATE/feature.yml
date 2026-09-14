@@ -1,0 +1,29 @@
+name: Feature task
+description: 提交具有明确验收条件的设计任务
+title: "[TASK] "
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: 模块
+      options: [CPU, NPU, SoC, DDR-DMA, Peripheral, Firmware, Tooling, Documentation]
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: 目标
+      description: 说明任务边界和不包含的内容。
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      description: 列出能够客观验证完成情况的测试、接口或指标。
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: 依赖与风险

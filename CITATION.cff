@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this project, please cite it using the metadata below."
+title: "XingShu: A Self-Designed RISC-V and Streaming-NPU Edge AI System"
+type: software
+authors:
+  - family-names: "Xiao"
+    given-names: "Jun"
+    alias: "dogson50"
+repository-code: "https://github.com/dogson50/xingshu-riscv-npu"
+license: "CERN-OHL-P-2.0"
+version: "0.1.0"
+date-released: "2026-09-14"

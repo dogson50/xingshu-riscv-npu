@@ -1,0 +1,30 @@
+name: Bug report
+description: 报告可复现的RTL、软件或板级问题
+title: "[BUG] "
+body:
+  - type: dropdown
+    id: module
+    attributes:
+      label: 模块
+      options: [CPU, NPU, SoC, DDR-DMA, Peripheral, Firmware, Tooling, Documentation]
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 期望行为与实际行为是什么？
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      description: 包括命令、Commit、工具版本、器件和约束。
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: 日志或波形
+      description: 只粘贴必要片段，不要上传License或敏感信息。

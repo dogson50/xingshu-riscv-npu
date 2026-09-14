@@ -1,0 +1,65 @@
+# FPGA generated state
+.Xil/
+*.cache/
+*.gen/
+*.hw/
+*.ip_user_files/
+*.runs/
+xsim.dir/
+vivado_project/
+pds_project/
+impl/
+synth/
+build/
+reports/raw/
+
+# Generated products and logs
+*.jou
+*.log
+*.str
+*.pb
+*.wdb
+*.vcd
+*.vvp
+*.dcp
+*.bit
+*.bin
+*.mcs
+*.prm
+*.rpt.tmp
+hs_err_pid*
+
+# Vendor licenses and credentials
+*.lic
+license.dat
+*.license
+.env
+.env.*
+!.env.example
+
+# Software build products
+firmware/**/build/
+*.elf
+*.hex
+*.map
+*.o
+*.a
+
+# Models and datasets
+models/weights/
+datasets/
+*.onnx
+*.pt
+*.pth
+*.tflite
+
+# Editors and OS
+.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local external dependency
+external/
+uiFDMA.v

@@ -1,0 +1,7 @@
+create_clock -name npu_clk -period 3.333 [get_ports clk]
+set_property HD.CLK_SRC BUFGCTRL_X0Y0 [get_ports clk]
+set_input_delay -clock npu_clk -max 0.667 [get_ports -filter {DIRECTION == IN && NAME != clk && NAME != resetn}]
+set_input_delay -clock npu_clk -min 0.333 [get_ports -filter {DIRECTION == IN && NAME != clk && NAME != resetn}]
+set_output_delay -clock npu_clk -max 0.667 [all_outputs]
+set_output_delay -clock npu_clk -min 0.000 [all_outputs]
+set_false_path -from [get_ports resetn]

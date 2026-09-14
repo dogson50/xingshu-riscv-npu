@@ -1,0 +1,5 @@
+# Default owner until module-specific teammate handles are added.
+*                               @dogson50
+/rtl/npu/                       @dogson50
+/modules/ddr-multichannel-dma/  @dogson50
+/.github/                       @dogson50

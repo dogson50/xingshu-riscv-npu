@@ -1,0 +1,10 @@
+XingShu RISC-V/NPU Edge AI System
+Copyright (c) 2026 XingShu Project Contributors
+
+This repository does not distribute uiFDMA.v, Pango Design Suite, AMD Vivado,
+FPGA vendor license files, vendor-generated IP, datasets, or third-party model
+weights. Users must obtain each external dependency from an authorized source
+and comply with its applicable terms.
+
+The ddr-multichannel-dma directory is a Git submodule and retains its own
+copyright and license notices.

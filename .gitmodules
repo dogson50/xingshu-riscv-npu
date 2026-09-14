@@ -1,0 +1,3 @@
+[submodule "modules/ddr-multichannel-dma"]
+	path = modules/ddr-multichannel-dma
+	url = https://github.com/dogson50/ddr-multichannel-dma.git
