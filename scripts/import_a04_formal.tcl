@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 XingShu Project Contributors
 
-# Import P89-A04 as the active formal v13 architecture while preserving the old files on disk.
+# Import the current v13 formal architecture (S2-N1; historical A04 paths retained) while preserving old files on disk.
 # May be sourced in the already-open GUI, or executed in batch with the XPR path as argv[0].
 set script_dir [file dirname [file normalize [info script]]]
 set project_root [file normalize [file join $script_dir ..]]

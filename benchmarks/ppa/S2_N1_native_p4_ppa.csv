@@ -1,0 +1,6 @@
+record_type,scenario,target_mhz,architecture,pass,cycles,delta_vs_a04,delta_vs_old_s2,wns_ns,whs_ns,tns_ns,setup_failing_endpoints,total_endpoints,total_lut,logic_lut,lutram,srl,ff,ramb36,ramb18,bram18_equiv,dsp48,routing_errors,max_effective_congestion_level,route_elapsed_s,scope
+simulation,continuous,,S2-N1-native-P4-striped,TRUE,3417,-30,-30,,,,,,,,,,,,,,,,,,full_gemm_feature_transport
+simulation,random_stalls,,S2-N1-native-P4-striped,TRUE,4280,-32,-39,,,,,,,,,,,,,,,,,,full_gemm_feature_transport
+simulation,reset_abort,,S2-N1-native-P4-striped,TRUE,4540,-33,-39,,,,,,,,,,,,,,,,,,full_gemm_feature_transport
+routed_ppa,registered_ooc,200,S2-N1-native-P4-striped,,,,,0.09,0.046,0.0,0,98823,17601,16141,1104,356,34386,83,4,170,324,0,,607.622,registered_OOC_full_gemm_feature_transport_not_board_signoff
+routed_ppa,registered_ooc,300,S2-N1-native-P4-striped,,,,,-1.257,0.039,-12217.667,31962,99963,18783,17323,1104,356,35413,83,4,170,324,0,3,458.0,registered_OOC_full_gemm_feature_transport_not_board_signoff

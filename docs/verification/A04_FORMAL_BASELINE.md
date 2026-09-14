@@ -1,5 +1,8 @@
 # P89-A04 正式版基线
 
+> **历史基线：** P89-A04 已于 2026-09-14 被 [S2-N1 正式基线](S2_N1_FORMAL_BASELINE.md)取代。本文件仅保留原始比较与复现记录。
+
+
 正式冻结日期：2026-09-13  
 目标器件：`xc7a200tfbg484-2`  
 生产顶层：`npu_v13_gemm_feature_transport`
@@ -111,7 +114,7 @@
    - 专门验证“工程已打开”分支后得到 `A04_ALREADY_OPEN_IMPORT_PASS`。
 4. 主 Vivado GUI 导入：
    - `A04_GUI_IMPORT_AUDIT_PASS`
-   - 主工程：`E:/vivado_fpga_projects/npu_mydesign/vivado_project/npu_mydesign.xpr`
+   - 主工程：`<local-formal-workspace>/vivado_project/npu_mydesign.xpr`
    - `sources_1` 顶层：`npu_v13_gemm_feature_transport`
    - 活动仿真集/顶层：`sim_a04 / tb_gemm_feature_transport`
    - 当前正式 run：`synth_a04_200m / impl_a04_200m`

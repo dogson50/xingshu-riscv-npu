@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1040" viewBox="0 0 1500 1040" role="img" aria-labelledby="title desc">
+  <title id="title">S2-N1 native P4-striped full transport architecture</title>
+  <desc id="desc">64-bit transport, retained panel buffers, sixteen 4 by 4 DSP tiles, four local P4 streams, direct PSUM, post-processing, feature store and completion.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6f9ff"/><stop offset="1" stop-color="#edf3fb"/></linearGradient>
+    <linearGradient id="compute" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#155eef"/><stop offset="1" stop-color="#0b3e9d"/></linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#20345a" flood-opacity="0.16"/></filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#38557d"/></marker>
+    <style>
+      .title{font:700 34px Arial,"Microsoft YaHei",sans-serif;fill:#12213a}.sub{font:500 17px Arial,"Microsoft YaHei",sans-serif;fill:#49617f}
+      .section{font:700 21px Arial,"Microsoft YaHei",sans-serif;fill:#17345c}.label{font:700 18px Arial,"Microsoft YaHei",sans-serif;fill:#142b4b}
+      .small{font:500 15px Arial,"Microsoft YaHei",sans-serif;fill:#3d5574}.white{fill:white}.box{rx:16;filter:url(#shadow);stroke-width:2}
+      .arrow{fill:none;stroke:#38557d;stroke-width:3;marker-end:url(#arrow)}.lane{fill:none;stroke-width:4;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1500" height="1040" fill="url(#bg)"/>
+  <text x="750" y="55" text-anchor="middle" class="title">S2-N1 原生 P4-striped Full Transport</text>
+  <text x="750" y="85" text-anchor="middle" class="sub">正式 v13 基线 · 64-bit 外部搬运 · 256 INT8 MAC/cycle · 无中央 512-bit 结果汇合</text>
+
+  <rect x="55" y="120" width="1390" height="170" rx="22" fill="#ffffff" stroke="#c5d3e6" stroke-width="2"/>
+  <text x="82" y="153" class="section">控制通路</text>
+  <g>
+    <rect class="box" x="105" y="180" width="205" height="72" fill="#eaf2ff" stroke="#8aaee8"/><text x="207" y="211" text-anchor="middle" class="label">Command FIFO</text><text x="207" y="235" text-anchor="middle" class="small">descriptor / tag</text>
+    <rect class="box" x="390" y="180" width="235" height="72" fill="#eaf2ff" stroke="#8aaee8"/><text x="507" y="211" text-anchor="middle" class="label">Dispatcher + Executor</text><text x="507" y="235" text-anchor="middle" class="small">配置、检查、任务生命周期</text>
+    <rect class="box" x="705" y="180" width="230" height="72" fill="#eaf2ff" stroke="#8aaee8"/><text x="820" y="211" text-anchor="middle" class="label">Packet Issue</text><text x="820" y="235" text-anchor="middle" class="small">retained panel / multi-K</text>
+    <rect class="box" x="1015" y="180" width="300" height="72" fill="#eaf2ff" stroke="#8aaee8"/><text x="1165" y="211" text-anchor="middle" class="label">Completion Tracker</text><text x="1165" y="235" text-anchor="middle" class="small">success / failure / reset-abort</text>
+    <path class="arrow" d="M310 216 H380"/><path class="arrow" d="M625 216 H695"/><path class="arrow" d="M935 216 H1005"/>
+  </g>
+
+  <rect x="55" y="320" width="1390" height="650" rx="22" fill="#ffffff" stroke="#c5d3e6" stroke-width="2"/>
+  <text x="82" y="356" class="section">数据通路</text>
+  <g>
+    <rect class="box" x="90" y="405" width="180" height="90" fill="#eef8f5" stroke="#73bba6"/><text x="180" y="438" text-anchor="middle" class="label">DDR / DMA</text><text x="180" y="464" text-anchor="middle" class="small">64-bit transport</text>
+    <rect class="box" x="330" y="405" width="220" height="90" fill="#eef8f5" stroke="#73bba6"/><text x="440" y="438" text-anchor="middle" class="label">Panel Load</text><text x="440" y="464" text-anchor="middle" class="small">narrow unpack / bank write</text>
+    <rect class="box" x="610" y="390" width="245" height="120" fill="#fff6df" stroke="#d9a441"/><text x="732" y="424" text-anchor="middle" class="label">A0/A1 + B0/B1</text><text x="732" y="450" text-anchor="middle" class="small">保留式 BRAM panel</text><text x="732" y="476" text-anchor="middle" class="small">每拍 A128 + B128</text>
+    <path class="arrow" d="M270 450 H320"/><path class="arrow" d="M550 450 H600"/>
+
+    <rect class="box" x="930" y="380" width="405" height="140" fill="url(#compute)" stroke="#082d77"/><text x="1132" y="417" text-anchor="middle" class="label white">统一 S2-N1 Compute Core</text><text x="1132" y="447" text-anchor="middle" class="small white">16 × 4×4 DSP tiles</text><text x="1132" y="474" text-anchor="middle" class="small white">256 INT8 MAC/cycle · output-stationary</text><text x="1132" y="500" text-anchor="middle" class="small white">16-cycle deterministic drain</text>
+    <path class="arrow" d="M855 450 H920"/>
+  </g>
+
+  <text x="1132" y="561" text-anchor="middle" class="label">4 × 128-bit 原生 P4-striped 输出</text>
+  <text x="1132" y="585" text-anchor="middle" class="small">每路带 tag / m / n / keep / tile_last，共 181 bit；2-entry 局部弹性切片</text>
+  <path class="lane" stroke="#ef5350" d="M1035 520 V625 H400"/>
+  <path class="lane" stroke="#f59e0b" d="M1100 520 V650 H675"/>
+  <path class="lane" stroke="#10b981" d="M1165 520 V675 H950"/>
+  <path class="lane" stroke="#8b5cf6" d="M1230 520 V700 H1225"/>
+
+  <g>
+    <rect class="box" x="275" y="625" width="250" height="118" fill="#fff0ef" stroke="#ef5350"/><text x="400" y="660" text-anchor="middle" class="label">Island 0</text><text x="400" y="687" text-anchor="middle" class="small">slice → direct PSUM BRAM</text><text x="400" y="713" text-anchor="middle" class="small">requant / activation</text>
+    <rect class="box" x="550" y="650" width="250" height="118" fill="#fff7e8" stroke="#f59e0b"/><text x="675" y="685" text-anchor="middle" class="label">Island 1</text><text x="675" y="712" text-anchor="middle" class="small">slice → direct PSUM BRAM</text><text x="675" y="738" text-anchor="middle" class="small">requant / activation</text>
+    <rect class="box" x="825" y="675" width="250" height="118" fill="#eafaf4" stroke="#10b981"/><text x="950" y="710" text-anchor="middle" class="label">Island 2</text><text x="950" y="737" text-anchor="middle" class="small">slice → direct PSUM BRAM</text><text x="950" y="763" text-anchor="middle" class="small">requant / activation</text>
+    <rect class="box" x="1100" y="700" width="250" height="118" fill="#f3efff" stroke="#8b5cf6"/><text x="1225" y="735" text-anchor="middle" class="label">Island 3</text><text x="1225" y="762" text-anchor="middle" class="small">slice → direct PSUM BRAM</text><text x="1225" y="788" text-anchor="middle" class="small">requant / activation</text>
+  </g>
+
+  <rect class="box" x="455" y="850" width="310" height="82" fill="#e9f3ff" stroke="#5b9bd5"/><text x="610" y="884" text-anchor="middle" class="label">Dual Feature Store</text><text x="610" y="909" text-anchor="middle" class="small">INT8 reorder / read / release</text>
+  <rect class="box" x="880" y="850" width="265" height="82" fill="#eef8f5" stroke="#73bba6"/><text x="1012" y="884" text-anchor="middle" class="label">64-bit Read Transport</text><text x="1012" y="909" text-anchor="middle" class="small">DMA writeback / consumer</text>
+  <path class="arrow" d="M400 743 C400 825 500 825 540 842"/><path class="arrow" d="M675 768 C675 810 650 825 635 842"/><path class="arrow" d="M950 793 C950 825 730 820 690 842"/><path class="arrow" d="M1225 818 C1225 840 800 825 740 848"/><path class="arrow" d="M765 891 H870"/>
+
+  <rect x="90" y="890" width="270" height="52" rx="12" fill="#f7f9fc" stroke="#c5d3e6"/><text x="225" y="913" text-anchor="middle" class="small">已删除：中央 512-bit row</text><text x="225" y="933" text-anchor="middle" class="small">4×512-bit shadow / 大结果 FIFO</text>
+  <path class="arrow" d="M1145 891 H1290"/><text x="1360" y="884" text-anchor="middle" class="small">completion</text><text x="1360" y="907" text-anchor="middle" class="small">按已提交数据</text><text x="1360" y="930" text-anchor="middle" class="small">精确完成</text>
+
+  <text x="750" y="1004" text-anchor="middle" class="small">边界原则：外部搬运保持 64 bit，宽数据只在岛内局部存在；计算阵列无 ready，背压由局部 slice 与任务调度隔离。</text>
+</svg>

@@ -7,14 +7,14 @@
 
 > A self-designed RISC-V CPU, streaming NPU and multi-channel DDR-DMA edge AI system on Pango FPGA.
 
-![A04 NPU architecture](docs/architecture/P89_A04_architecture.svg)
+![S2-N1 NPU architecture](docs/architecture/S2_N1_native_p4_architecture.svg)
 
 ## 项目目标
 
 星枢面向边缘视觉与智能感知场景，计划在紫光同创 PG2L200H FPGA 上集成：
 
 - 自研五级流水 RV32I CPU；
-- 自研 v13/A04 四岛式流计算 NPU；
+- 自研 v13/S2-N1 原生 P4-striped 流计算 NPU；
 - 自研多通道 DDR-DMA；
 - Cache、片上互连、UART、GPIO、中断与定时器；
 - INT8 神经网络推理和视频演示应用。
@@ -25,13 +25,13 @@ CPU 负责软件执行、系统控制和 NPU 任务调度，NPU 负责矩阵乘�
 
 | 模块 | RTL/软件 | 仿真 | 综合/实现 | 上板 |
 |---|---|---|---|---|
-| v13/A04 NPU | 已导入 | 14 项核心回归 | Vivado 参考实现 | 待移植 PDS |
+| v13/S2-N1 NPU | 已导入 | 14 项核心回归 + 3 项完整 transport 回归 | 200 MHz routed OOC 通过 | 待移植 PDS |
 | RV32I CPU | 规划中 | — | — | — |
 | DDR 多通道 DMA | 独立开源仓库 | 已有验证 | Vivado 参考实现 | 待适配 HMIC |
 | SoC 集成 | 规划中 | — | — | — |
 | 边缘 AI 应用 | 规划中 | — | — | — |
 
-当前 A04 报告中的 300 MHz 数据用于架构横向比较，并不表示完整系统已经在 300 MHz 闭合。竞赛目标器件上的频率和资源数据将在 PDS 实现后单独发布。
+当前正式 NPU 为 S2-N1：64-bit 外部搬运、16×4×4 tile、四路原生 P4-striped 局部后处理。200 MHz registered OOC 已通过；300 MHz 仅用于架构压力测试且尚未闭合。详见 [S2-N1 正式基线](docs/verification/S2_N1_FORMAL_BASELINE.md)。竞赛目标器件上的频率和资源数据将在 PDS 实现后单独发布。
 
 ## 快速开始
 
@@ -50,7 +50,7 @@ cd xingshu-riscv-npu
 ./scripts/run_rtl_tests.ps1
 ```
 
-当前脚本执行 14 项 NPU 计算、控制、调度、缓存和联合回归。
+当前脚本执行 14 项 NPU 计算、控制、调度、缓存和联合回归。正式 S2-N1 的三组完整 64-bit transport XSim 回归可运行 `./scripts/run_formal_transport_regression.ps1`。
 
 ## 目录
 

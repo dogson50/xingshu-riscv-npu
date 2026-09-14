@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: Apache-2.0
 # Copyright (c) 2026 XingShu Project Contributors
 
-# Reproduce the A04 apples-to-apples OOC PPA run using the registered timing fixture.
+# Reproduce the current S2-N1 formal OOC PPA run using the registered timing fixture.
 # Usage: vivado -mode batch -source run_a04_ppa_ooc.tcl -tclargs 200|300 optional_tag
 set mhz [lindex $argv 0]
 set tag [lindex $argv 1]
@@ -16,7 +16,7 @@ set build [file join $project_root vivado_project a04_ppa $run_name]
 set reports [file join $project_root reports a04 $run_name]
 if {[file exists $build] || [file exists $reports]} {error "refuse overwrite: $run_name"}
 file mkdir $reports
-set fixture [file join $project_root tb/unit/npu/v13/a04/gemm_feature_transport_timing.sv]
+set fixture [file join $project_root tb/unit/npu/v13/gemm_feature_transport_timing.sv]
 set xdc [expr {$mhz == 200 ? $a04_ppa_xdc_200 : $a04_ppa_xdc_300}]
 create_project $run_name $build -part xc7a200tfbg484-2
 add_files -norecurse [concat $a04_design_sources [list $fixture]]
@@ -47,7 +47,7 @@ set dsps [llength [get_cells -hierarchical -filter {REF_NAME =~ DSP48*}]]
 set r36 [llength [get_cells -hierarchical -filter {REF_NAME =~ RAMB36*}]]
 set r18 [llength [get_cells -hierarchical -filter {REF_NAME =~ RAMB18*}]]
 set fh [open [file join $reports summary.txt] w]
-puts $fh "architecture=P89-A04-formal\ntop=gemm_feature_transport_timing\ntransport_w=64\ntarget_mhz=$mhz\nwns_ns=$wns\nwhs_ns=$whs\ndsp=$dsps\nramb36=$r36\nramb18=$r18\ncomparison_scope=registered_OOC_fixture_not_board_signoff"
+puts $fh "architecture=S2-N1-native-P4-striped-full-transport-formal\ntop=gemm_feature_transport_timing\ntransport_w=64\ntarget_mhz=$mhz\nwns_ns=$wns\nwhs_ns=$whs\ndsp=$dsps\nramb36=$r36\nramb18=$r18\ncomparison_scope=registered_OOC_fixture_not_board_signoff"
 close $fh
 puts "A04_PPA_DONE mhz=$mhz WNS=$wns WHS=$whs DSP=$dsps RAMB36=$r36 RAMB18=$r18 reports=$reports"
 close_project
